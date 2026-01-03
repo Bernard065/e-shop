@@ -1,0 +1,26 @@
+{
+  "name": "@e-shop/api-getway-e2e",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "implicitDependencies": [
+      "@e-shop/api-getway"
+    ],
+    "targets": {
+      "e2e": {
+        "executor": "@nx/jest:jest",
+        "outputs": [
+          "{projectRoot}/test-output/jest/coverage"
+        ],
+        "options": {
+          "jestConfig": "apps/api-getway-e2e/jest.config.cts",
+          "passWithNoTests": true
+        },
+        "dependsOn": [
+          "@e-shop/api-getway:build",
+          "@e-shop/api-getway:serve"
+        ]
+      }
+    }
+  }
+}
