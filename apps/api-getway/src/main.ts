@@ -1,8 +1,3 @@
-/**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
- */
-
 import express from 'express';
 import * as path from 'path';
 
@@ -14,7 +9,7 @@ app.get('/api', (req, res) => {
   res.send({ message: 'Welcome to api-getway!' });
 });
 
-const port = process.env.PORT || 3333;
+const port = process.env.API_PORT || 8080;
 const server = app.listen(port, () => {
   console.log(`Listening at http://localhost:${port}/api`);
 });
