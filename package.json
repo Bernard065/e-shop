@@ -3,7 +3,12 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "dev": "npx nx run-many --target=serve --all"
+    "dev": "npx nx run-many --target=serve --all",
+    "build": "nx run-many -t build",
+    "format": "nx format:write",
+    "lint": "nx run-many -t lint",
+    "lint:fix": "nx run-many -t lint --fix",
+    "test": "nx run-many -t test"
   },
   "private": true,
   "dependencies": {
