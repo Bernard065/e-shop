@@ -14,6 +14,12 @@
     },
     {
       "path": "./apps/api-getway"
+    },
+    {
+      "path": "./libs/common"
+    },
+    {
+      "path": "./libs/shared-types"
     }
   ]
 }
