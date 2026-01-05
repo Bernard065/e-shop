@@ -20,7 +20,9 @@ describe('errorMiddleware', () => {
   });
 
   it('should handle AppError correctly', () => {
-    const appError = new AppError('Test error', 400, true, { field: 'invalid' });
+    const appError = new AppError('Test error', 400, true, {
+      field: 'invalid',
+    });
 
     errorMiddleware(appError, mockReq, mockRes as Response, mockNext);
 
