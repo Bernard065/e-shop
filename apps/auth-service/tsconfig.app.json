@@ -21,6 +21,15 @@
   "references": [
     {
       "path": "../../libs/common/tsconfig.lib.json"
+    },
+    {
+      "path": "../../libs/redis/tsconfig.lib.json"
+    },
+    {
+      "path": "../../libs/database/tsconfig.lib.json"
+    },
+    {
+      "path": "../../libs/shared-types/tsconfig.lib.json"
     }
   ]
 }

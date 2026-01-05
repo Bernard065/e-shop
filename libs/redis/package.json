@@ -1,5 +1,5 @@
 {
-  "name": "@e-shop/database",
+  "name": "@e-shop/redis",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -17,8 +17,6 @@
   },
   "dependencies": {
     "tslib": "^2.3.0",
-    "dotenv": "^17.2.3",
-    "@prisma/client": "6.19",
-    "prisma": "6.19"
+    "ioredis": "^5.8.2"
   }
 }
