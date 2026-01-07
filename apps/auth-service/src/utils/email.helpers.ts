@@ -5,22 +5,24 @@ import path from 'path';
 
 dotenv.config();
 
-// Config Validation
-const requiredEnvVars = [
-  'SMTP_HOST',
-  'SMTP_PORT',
-  'SMTP_USER',
-  'SMTP_PASSWORD',
-];
-const missingVars = requiredEnvVars.filter((key) => !process.env[key]);
-
-if (missingVars.length > 0) {
-  throw new Error(
-    `Missing required environment variables: ${missingVars.join(', ')}`,
-  );
-}
-
+// Helper to validate and get transporter on demand
 const getTransporter = () => {
+  // 1. Move Validation INSIDE the function
+  const requiredEnvVars = [
+    'SMTP_HOST',
+    'SMTP_PORT',
+    'SMTP_USER',
+    'SMTP_PASSWORD',
+  ];
+  const missingVars = requiredEnvVars.filter((key) => !process.env[key]);
+
+  if (missingVars.length > 0) {
+    throw new Error(
+      `Missing required environment variables: ${missingVars.join(', ')}`,
+    );
+  }
+
+  // 2. Return the object
   return nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: Number(process.env.SMTP_PORT),
@@ -32,7 +34,6 @@ const getTransporter = () => {
   });
 };
 
-// Export verification so main.ts can await it if needed
 export const verifySmtp = async () => {
   try {
     await getTransporter().verify();

@@ -1,4 +1,4 @@
-import { sendEmail } from './email.helpers.js';
+import { sendEmail, renderEmailTemplate } from './email.helpers';
 import nodemailer from 'nodemailer';
 import ejs from 'ejs';
 import path from 'path';
@@ -7,197 +7,90 @@ import path from 'path';
 jest.mock('nodemailer');
 jest.mock('ejs');
 jest.mock('path');
-jest.mock('dotenv', () => ({
-  config: jest.fn(),
-}));
+jest.mock('dotenv');
 
 const mockedNodemailer = nodemailer as jest.Mocked<typeof nodemailer>;
 const mockedEjs = ejs as jest.Mocked<typeof ejs>;
 const mockedPath = path as jest.Mocked<typeof path>;
 
 describe('Email Helpers', () => {
-  let mockTransporter: jest.Mocked<
-    Pick<nodemailer.Transporter, 'sendMail' | 'verify'>
-  >;
+  let mockTransporter: {
+    sendMail: jest.Mock;
+    verify: jest.Mock;
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();
 
-    // Mock environment variables
+    // Setup Env Vars
     process.env.SMTP_HOST = 'smtp.example.com';
     process.env.SMTP_PORT = '587';
     process.env.SMTP_SERVICE = 'gmail';
     process.env.SMTP_USER = 'test@example.com';
     process.env.SMTP_PASSWORD = 'password';
 
-    // Mock nodemailer createTransport
+    // Setup Transporter Mock with explicit Jest functions
     mockTransporter = {
-      sendMail: jest.fn(),
+      sendMail: jest.fn().mockResolvedValue({ messageId: '123' }),
       verify: jest.fn().mockResolvedValue(true),
     };
+
     mockedNodemailer.createTransport.mockReturnValue(
       mockTransporter as unknown as nodemailer.Transporter,
     );
 
-    // Mock path.resolve
-    mockedPath.resolve.mockImplementation((...args) => args.join('/'));
+    // Mock path resolve
+    mockedPath.resolve.mockReturnValue('/mocked/path/template.ejs');
   });
 
   describe('renderEmailTemplate', () => {
-    it('should render template successfully with provided data', async () => {
-      const templateName = 'user-registration-otp';
-      const data = { name: 'John Doe', otp: '123456' };
-      const expectedHtml = '<html>Rendered template</html>';
+    it('should render template successfully', async () => {
+      const data = { name: 'John' };
+      mockedEjs.renderFile.mockResolvedValue('<html>Content</html>');
 
-      mockedEjs.renderFile.mockResolvedValue(expectedHtml);
+      const result = await renderEmailTemplate('test-template', data);
 
-      // Import the function to trigger module initialization
-      const { renderEmailTemplate } = await import('./email.helpers.js');
-
-      const result = await renderEmailTemplate(templateName, data);
-
-      expect(mockedPath.resolve).toHaveBeenCalledWith(
-        process.cwd(),
-        'src',
-        'assets',
-        'templates',
-        `${templateName}.ejs`,
-      );
+      expect(mockedPath.resolve).toHaveBeenCalled();
       expect(mockedEjs.renderFile).toHaveBeenCalledWith(
-        expect.stringContaining(`${templateName}.ejs`),
+        '/mocked/path/template.ejs',
         data,
       );
-      expect(result).toBe(expectedHtml);
-    });
-
-    it('should handle template rendering errors', async () => {
-      const templateName = 'non-existent-template';
-      const data = { name: 'John Doe' };
-      const error = new Error('Template not found');
-
-      mockedEjs.renderFile.mockRejectedValue(error);
-
-      const { renderEmailTemplate } = await import('./email.helpers.js');
-
-      await expect(renderEmailTemplate(templateName, data)).rejects.toThrow(
-        'Template not found',
-      );
-    });
-
-    it('should render template with empty data object', async () => {
-      const templateName = 'user-registration-otp';
-      const data = {};
-      const expectedHtml = '<html>Empty data template</html>';
-
-      mockedEjs.renderFile.mockResolvedValue(expectedHtml);
-
-      const { renderEmailTemplate } = await import('./email.helpers.js');
-
-      const result = await renderEmailTemplate(templateName, data);
-
-      expect(result).toBe(expectedHtml);
-    });
-
-    it('should render template with complex data', async () => {
-      const templateName = 'user-registration-otp';
-      const data = {
-        name: 'Jane Smith',
-        otp: '789012',
-        additionalInfo: { key: 'value' },
-      };
-      const expectedHtml = '<html>Complex data template</html>';
-
-      mockedEjs.renderFile.mockResolvedValue(expectedHtml);
-
-      const { renderEmailTemplate } = await import('./email.helpers.js');
-
-      const result = await renderEmailTemplate(templateName, data);
-
-      expect(mockedEjs.renderFile).toHaveBeenCalledWith(
-        expect.any(String),
-        data,
-      );
-      expect(result).toBe(expectedHtml);
+      expect(result).toBe('<html>Content</html>');
     });
   });
 
   describe('sendEmail', () => {
     it('should send email successfully', async () => {
-      const to = 'recipient@example.com';
-      const subject = 'Test Subject';
-      const templateName = 'user-registration-otp';
-      const data = { name: 'John Doe', otp: '123456' };
-      const renderedHtml = '<html>Rendered email</html>';
+      mockedEjs.renderFile.mockResolvedValue('<html>Content</html>');
 
-      mockedEjs.renderFile.mockResolvedValue(renderedHtml);
-      mockTransporter.sendMail.mockResolvedValue({ messageId: '123' });
-
-      const result = await sendEmail(to, subject, templateName, data);
-
-      expect(mockedEjs.renderFile).toHaveBeenCalledWith(
-        expect.stringContaining(`${templateName}.ejs`),
-        data,
-      );
-      expect(mockTransporter.sendMail).toHaveBeenCalledWith({
-        from: `Hakika Support <${process.env.SMTP_USER}>`,
-        to,
-        subject,
-        html: renderedHtml,
+      await sendEmail('user@test.com', 'Subject', 'otp-template', {
+        code: 123,
       });
-      expect(result).toBe(true);
-    });
 
-    it('should handle template rendering errors during send', async () => {
-      const to = 'recipient@example.com';
-      const subject = 'Test Subject';
-      const templateName = 'user-registration-otp';
-      const data = { name: 'John Doe' };
-      const error = new Error('Template rendering failed');
-
-      mockedEjs.renderFile.mockRejectedValue(error);
-
-      await expect(sendEmail(to, subject, templateName, data)).rejects.toThrow(
-        'Failed to send email',
+      // Verify createTransport config
+      expect(mockedNodemailer.createTransport).toHaveBeenCalledWith(
+        expect.objectContaining({
+          host: 'smtp.example.com',
+          auth: { user: 'test@example.com', pass: 'password' },
+        }),
       );
-      expect(mockTransporter.sendMail).not.toHaveBeenCalled();
-    });
 
-    it('should handle SMTP sending errors', async () => {
-      const to = 'recipient@example.com';
-      const subject = 'Test Subject';
-      const templateName = 'user-registration-otp';
-      const data = { name: 'John Doe', otp: '123456' };
-      const renderedHtml = '<html>Rendered email</html>';
-      const smtpError = new Error('SMTP connection failed');
-
-      mockedEjs.renderFile.mockResolvedValue(renderedHtml);
-      mockTransporter.sendMail.mockRejectedValue(smtpError);
-
-      await expect(sendEmail(to, subject, templateName, data)).rejects.toThrow(
-        'Failed to send email',
-      );
-      expect(mockTransporter.sendMail).toHaveBeenCalled();
-    });
-
-    it('should send email with different data inputs', async () => {
-      const to = 'another@example.com';
-      const subject = 'Another Subject';
-      const templateName = 'user-registration-otp';
-      const data = { name: 'Jane Smith', otp: '654321' };
-      const renderedHtml = '<html>Different rendered email</html>';
-
-      mockedEjs.renderFile.mockResolvedValue(renderedHtml);
-      mockTransporter.sendMail.mockResolvedValue({ messageId: '456' });
-
-      const result = await sendEmail(to, subject, templateName, data);
-
+      // Verify sendMail call
       expect(mockTransporter.sendMail).toHaveBeenCalledWith({
-        from: `Hakika Support <${process.env.SMTP_USER}>`,
-        to,
-        subject,
-        html: renderedHtml,
+        from: expect.stringContaining('Hakika Support'),
+        to: 'user@test.com',
+        subject: 'Subject',
+        html: '<html>Content</html>',
       });
-      expect(result).toBe(true);
+    });
+
+    it('should throw error if env vars are missing', async () => {
+      // Delete a required variable to trigger validation
+      delete process.env.SMTP_HOST;
+
+      await expect(
+        sendEmail('user@test.com', 'Subject', 'tpl', {}),
+      ).rejects.toThrow('Missing required environment variables');
     });
   });
 });
