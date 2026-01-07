@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import { redis } from '@e-shop/redis';
-import { sendEmail } from './email.helpers';
+import { sendEmail } from './email.helpers.js';
 import { ValidationError } from '@e-shop/common';
 
 // Helper: Check for locks
@@ -44,7 +44,7 @@ export const sendOtp = async (
   template: string,
 ) => {
   // Generate a 6-digit OTP
-  const otp = crypto.randomInt(100000, 999999).toString();
+  const otp = crypto.randomInt(100000, 1000000).toString();
 
   // Send email
   await sendEmail(email, 'Verify your email', template, { name, otp });
