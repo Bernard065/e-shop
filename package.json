@@ -10,7 +10,8 @@
     "lint:fix": "nx run-many -t lint --fix",
     "test": "nx run-many -t test",
     "prisma:generate": "npx prisma generate --schema=libs/database/prisma/schema.prisma",
-    "prisma:db-push": "npx prisma db push --schema=libs/database/prisma/schema.prisma"
+    "prisma:db-push": "npx prisma db push --schema=libs/database/prisma/schema.prisma",
+    "ci": "npx nx run-many -t lint test build typecheck"
   },
   "private": true,
   "dependencies": {
