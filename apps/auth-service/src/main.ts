@@ -64,7 +64,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 // Routes
-app.use('/api', router);
+app.use(router);
 
 // Error handling middleware
 app.use(errorMiddleware);

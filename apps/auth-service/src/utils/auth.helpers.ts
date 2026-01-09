@@ -46,12 +46,34 @@ export const sendOtp = async (
   // Generate a 6-digit OTP
   const otp = crypto.randomInt(100000, 1000000).toString();
 
-  // Send email
-  await sendEmail(email, 'Verify your email', template, { name, otp });
-
-  // Save OTP to Redis (Expires in 5 mins)
+  // Save OTP to Redis FIRST (Expires in 5 mins)
   await redis.set(`otp:${email}`, otp, 'EX', 300);
+  console.log(`OTP saved to Redis for ${email}`);
 
   // Set Cooldown (Expires in 1 min)
   await redis.set(`otp_cooldown:${email}`, 'true', 'EX', 60);
+
+  // Send email last (so OTP is saved even if email fails)
+  await sendEmail(email, 'Verify your email', template, { name, otp });
+};
+
+export const verifyOtp = async (email: string, otp: string) => {
+  const storedOtp = await redis.get(`otp:${email}`);
+  const failedAttemptsKey = `otp_failed_attempts:${email}`;
+  const failedAttempts = parseInt((await redis.get(failedAttemptsKey)) || '0');
+
+  if (storedOtp !== otp) {
+    if (failedAttempts >= 2) {
+      await redis.set(`otp_lock:${email}`, 'locked', 'EX', 3600);
+      await redis.del(`otp:${email}`, failedAttemptsKey);
+      throw new ValidationError(
+        'Too many failed attempts. Please request a new OTP after some time.',
+      );
+    }
+    await redis.set(failedAttemptsKey, failedAttempts + 1, 'EX', 3600);
+    throw new ValidationError('Invalid OTP provided');
+  }
+
+  // OTP is valid - clean up
+  await redis.del(`otp:${email}`, failedAttemptsKey);
 };
