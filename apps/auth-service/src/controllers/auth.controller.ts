@@ -5,20 +5,15 @@ import {
   sendOtp,
   trackOtpRequest,
 } from '../utils/auth.helpers';
-import { z } from 'zod';
+import { baseUserSchema } from '@e-shop/shared-types';
 
-const initiateSchema = z.object({
-  name: z.string().min(1),
-  email: z.string().email(),
-});
-
-export const initiateRegistration = async (
+export const userRegistration = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const { name, email } = initiateSchema.parse(req.body);
+    const { name, email } = baseUserSchema.parse(req.body);
 
     const existingUser = await prisma.user.findUnique({
       where: { email },

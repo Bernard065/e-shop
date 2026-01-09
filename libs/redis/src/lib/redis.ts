@@ -1,10 +1,22 @@
 import { Redis } from 'ioredis';
 
+// Parse Redis host - remove protocol if present
+const redisHost = (process.env.REDIS_HOST || '127.0.0.1').replace(
+  /^https?:\/\//,
+  '',
+);
+
+// Determine if TLS should be used (Upstash and other cloud Redis providers require TLS)
+const useTls =
+  process.env.REDIS_TLS === 'true' ||
+  (process.env.REDIS_HOST?.includes('upstash.io') ?? false);
+
 // Create Redis client with retry strategy
 export const redis = new Redis({
-  host: process.env.REDIS_HOST || '127.0.0.1',
+  host: redisHost,
   port: Number(process.env.REDIS_PORT) || 6379,
   password: process.env.REDIS_PASSWORD,
+  tls: useTls ? {} : undefined,
   maxRetriesPerRequest: 3,
   retryStrategy(times) {
     const delay = Math.min(times * 50, 2000);

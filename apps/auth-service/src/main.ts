@@ -1,8 +1,25 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import { errorMiddleware } from '@e-shop/common';
 import cookieParser from 'cookie-parser';
 import { connectRedis, disconnectRedis } from '@e-shop/redis';
+import router from './routes/auth.router';
+import swaggerUi from 'swagger-ui-express';
+import fs from 'fs/promises';
+import path from 'path';
+
+let swaggerDocument: object | null = null;
+
+async function loadSwaggerDocument(): Promise<object> {
+  if (!swaggerDocument) {
+    const content = await fs.readFile(
+      path.join(__dirname, 'assets', 'swagger-output.json'),
+      'utf8',
+    );
+    swaggerDocument = JSON.parse(content);
+  }
+  return swaggerDocument as object;
+}
 
 const app = express();
 
@@ -30,6 +47,26 @@ app.get('/health', async (req, res) => {
   res.status(200).json({ status: 'ok', service: 'auth' });
 });
 
+// Swagger UI setup (lazy loading)
+if (process.env.NODE_ENV !== 'production') {
+  app.use(
+    '/api-docs',
+    swaggerUi.serve,
+    async (req: Request, res: Response, next: NextFunction) => {
+      const doc = await loadSwaggerDocument();
+      swaggerUi.setup(doc)(req, res, next);
+    },
+  );
+  app.get('/docs-json', async (req, res) => {
+    const doc = await loadSwaggerDocument();
+    res.json(doc);
+  });
+}
+
+// Routes
+app.use('/api', router);
+
+// Error handling middleware
 app.use(errorMiddleware);
 
 const port = process.env.AUTH_PORT || 6001;
