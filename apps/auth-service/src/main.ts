@@ -3,6 +3,17 @@ import cors from 'cors';
 import { errorMiddleware } from '@e-shop/common';
 import cookieParser from 'cookie-parser';
 import { connectRedis, disconnectRedis } from '@e-shop/redis';
+import router from './routes/auth.router';
+import swaggerUi from 'swagger-ui-express';
+import fs from 'fs';
+import path from 'path';
+
+const swaggerDocument = JSON.parse(
+  fs.readFileSync(
+    path.join(__dirname, 'assets', 'swagger-output.json'),
+    'utf8',
+  ),
+);
 
 const app = express();
 
@@ -30,6 +41,16 @@ app.get('/health', async (req, res) => {
   res.status(200).json({ status: 'ok', service: 'auth' });
 });
 
+// Swagger UI setup
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.get('/docs-json', (req, res) => {
+  res.json(swaggerDocument);
+});
+
+// Routes
+app.use('/api', router);
+
+// Error handling middleware
 app.use(errorMiddleware);
 
 const port = process.env.AUTH_PORT || 6001;
