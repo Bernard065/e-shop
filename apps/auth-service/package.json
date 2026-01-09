@@ -23,7 +23,7 @@
             {
               "input": "apps/auth-service/src/assets",
               "glob": "**/*",
-              "output": "./assets"
+              "output": "apps/auth-service/src/assets"
             }
           ],
           "esbuildOptions": {
