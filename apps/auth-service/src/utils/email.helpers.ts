@@ -47,13 +47,27 @@ export const renderEmailTemplate = async (
   templateName: string,
   data: Record<string, unknown>,
 ) => {
-  const templatePath = path.resolve(
-    process.cwd(),
-    'src',
-    'assets',
-    'templates',
-    `${templateName}.ejs`,
-  );
+  // In development, templates are in src/assets/templates
+  // In production (bundled), they're in dist/apps/auth-service/src/assets/templates
+  const isDev = process.env.NODE_ENV === 'development';
+
+  const templatePath = isDev
+    ? path.resolve(
+        __dirname,
+        '..',
+        'assets',
+        'templates',
+        `${templateName}.ejs`,
+      )
+    : path.resolve(
+        __dirname,
+        'apps',
+        'auth-service',
+        'src',
+        'assets',
+        'templates',
+        `${templateName}.ejs`,
+      );
 
   return ejs.renderFile(templatePath, data);
 };

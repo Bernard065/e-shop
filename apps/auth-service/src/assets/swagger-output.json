@@ -11,13 +11,78 @@
   "paths": {
     "/user-registration": {
       "post": {
-        "description": "",
+        "tags": ["Auth"],
+        "summary": "Register a new user",
+        "description": "Send OTP to user email for registration verification",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "John Doe"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "john@example.com"
+                }
+              }
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OTP sent successfully"
           },
           "409": {
-            "description": "Conflict"
+            "description": "User already exists"
+          }
+        }
+      }
+    },
+    "/verify-user": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Verify user registration",
+        "description": "Verify OTP and create user account",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "John Doe"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "john@example.com"
+                },
+                "otp": {
+                  "type": "string",
+                  "example": "123456"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "SecurePassword123"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "User registered successfully"
+          },
+          "400": {
+            "description": "Invalid OTP or validation error"
           }
         }
       }
