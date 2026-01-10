@@ -1,7 +1,9 @@
 import express, { Router } from 'express';
 import {
   loginUser,
+  userForgotPassword,
   userRegistration,
+  userResetPassword,
   verifyUser,
 } from '../controllers/auth.controller';
 
@@ -79,6 +81,54 @@ router.post(
     }
   */
   loginUser,
+);
+
+router.post(
+  '/forgot-user-password',
+  /*
+    #swagger.tags = ['Auth']
+    #swagger.summary = 'Forgot user password'
+    #swagger.description = 'Send OTP to user email for password reset'
+    #swagger.parameters['body'] = {
+      in: 'body',
+      required: true,
+      schema: {
+        email: 'john@example.com'
+      }
+    }                     
+    #swagger.responses[200] = {
+      description: 'OTP sent successfully'
+    }
+    #swagger.responses[404] = {
+      description: 'User not found'
+    }
+  */
+  (req, res, next) => userForgotPassword(req, res, next, 'user'),
+);
+
+router.post(
+  '/reset-user-password',
+  /*
+    #swagger.tags = ['Auth']
+    #swagger.summary = 'Reset user password'
+    #swagger.description = 'Reset user password using OTP'
+    #swagger.parameters['body'] = {
+      in: 'body',
+      required: true,
+      schema: {
+        email: 'john@example.com',
+        otp: '123456',
+        newPassword: 'NewSecurePassword123'
+      }
+    }   
+    #swagger.responses[200] = {
+      description: 'Password reset successful'
+    }
+    #swagger.responses[400] = {
+      description: 'Invalid OTP or validation error'
+    }
+  */
+  (req, res, next) => userResetPassword(req, res, next, 'user'),
 );
 
 export default router;

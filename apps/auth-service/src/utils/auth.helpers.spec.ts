@@ -59,27 +59,26 @@ describe('Auth Helpers', () => {
   });
 
   describe('trackOtpRequest', () => {
-    it('should increment request count', async () => {
-      mockedRedis.get.mockResolvedValue('1');
-      mockedRedis.set.mockResolvedValue('OK');
+    it('should increment request count and set expiry if first request', async () => {
+      mockedRedis.incr.mockResolvedValue(1);
+      mockedRedis.expire.mockResolvedValue(1);
 
       await expect(trackOtpRequest('test@example.com')).resolves.not.toThrow();
+      expect(mockedRedis.expire).toHaveBeenCalledWith('otp_request_count:test@example.com', 3600);
+    });
 
-      expect(mockedRedis.set).toHaveBeenCalledWith(
-        'otp_request_count:test@example.com',
-        2,
-        'EX',
-        3600,
-      );
+    it('should not set expiry if not first request', async () => {
+      mockedRedis.incr.mockResolvedValue(2);
+
+      await expect(trackOtpRequest('test@example.com')).resolves.not.toThrow();
+      expect(mockedRedis.expire).not.toHaveBeenCalled();
     });
 
     it('should lock if too many requests', async () => {
-      mockedRedis.get.mockResolvedValue('2');
+      mockedRedis.incr.mockResolvedValue(4);
+      mockedRedis.set.mockResolvedValue('OK');
 
-      await expect(trackOtpRequest('test@example.com')).rejects.toThrow(
-        ValidationError,
-      );
-
+      await expect(trackOtpRequest('test@example.com')).rejects.toThrow(ValidationError);
       expect(mockedRedis.set).toHaveBeenCalledWith(
         'otp_spam_lock:test@example.com',
         'locked',
