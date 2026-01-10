@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import { redis } from '@e-shop/redis';
-import { sendEmail } from './email.helpers.js';
+import { sendEmail } from './email.helpers';
 import { ValidationError } from '@e-shop/common';
 
 // Helper: Check for locks
