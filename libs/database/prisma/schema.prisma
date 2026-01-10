@@ -14,9 +14,18 @@ model User {
   name      String
   password  String?
   following String[]
+
   avatar   Image?
+  role      Role     @default(USER)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  USER
+  SELLER
+  ADMIN
 }
 
 model Image {
@@ -24,7 +33,9 @@ model Image {
   file_id   String
   url       String
   userId    String   @unique @db.ObjectId
+
   user      User     @relation(fields: [userId], references: [id])
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

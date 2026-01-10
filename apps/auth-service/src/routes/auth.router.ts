@@ -1,5 +1,9 @@
 import express, { Router } from 'express';
-import { userRegistration, verifyUser } from '../controllers/auth.controller';
+import {
+  loginUser,
+  userRegistration,
+  verifyUser,
+} from '../controllers/auth.controller';
 
 const router: Router = express.Router();
 
@@ -51,6 +55,30 @@ router.post(
     }
   */
   verifyUser,
+);
+
+router.post(
+  '/login-user',
+  /*
+    #swagger.tags = ['Auth']
+    #swagger.summary = 'Login user'
+    #swagger.description = 'Authenticate user and return JWT tokens'
+    #swagger.parameters['body'] = {
+      in: 'body',
+      required: true,
+      schema: {
+        email: 'john@example.com',
+        password: 'SecurePassword123'
+      }
+    }
+    #swagger.responses[200] = {
+      description: 'Login successful'
+    }
+    #swagger.responses[400] = {
+      description: 'Invalid email or password'
+    }
+  */
+  loginUser,
 );
 
 export default router;
