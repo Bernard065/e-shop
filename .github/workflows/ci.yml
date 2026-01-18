@@ -19,7 +19,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          filter: tree:0
           fetch-depth: 0
 
       # Cache node_modules
@@ -28,6 +27,14 @@ jobs:
           node-version: 20
           cache: 'npm'
 
-      - run: npm ci
+      - run: npm ci --legacy-peer-deps
+
+      - name: Cache Nx
+        uses: actions/cache@v4
+        with:
+          path: node_modules/.cache/nx
+          key: nx-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            nx-${{ runner.os }}-
 
       - run: npx nx run-many -t lint test build typecheck
