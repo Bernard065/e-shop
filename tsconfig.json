@@ -26,6 +26,12 @@
     },
     {
       "path": "./libs/redis"
+    },
+    {
+      "path": "./apps/e-shop-web-e2e"
+    },
+    {
+      "path": "./apps/e-shop-web"
     }
   ]
 }

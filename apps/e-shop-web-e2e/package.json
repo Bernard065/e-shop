@@ -1,0 +1,10 @@
+{
+  "name": "@e-shop/e-shop-web-e2e",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "implicitDependencies": [
+      "@e-shop/e-shop-web"
+    ]
+  }
+}

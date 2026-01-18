@@ -23,7 +23,7 @@ if (process.env.NODE_ENV === 'production') {
 
 // CORS Configuration
 const ALLOWED_ORIGINS = (
-  process.env.CLIENT_URL || 'http://localhost:4200'
+  process.env.CLIENT_URL || 'http://localhost:3000'
 ).split(',');
 
 app.use(
