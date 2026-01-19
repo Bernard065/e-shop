@@ -2,6 +2,49 @@
   "name": "@e-shop/e-shop-web",
   "version": "0.0.1",
   "private": true,
+  "nx": {
+    "targets": {
+      "build": {
+        "executor": "@nx/next:build",
+        "outputs": [
+          "{projectRoot}/.next"
+        ],
+        "defaultConfiguration": "production",
+        "options": {
+          "outputPath": ".next"
+        },
+        "configurations": {
+          "development": {
+            "outputPath": ".next"
+          },
+          "production": {
+            "outputPath": ".next"
+          }
+        }
+      },
+      "serve": {
+        "executor": "@nx/next:server",
+        "defaultConfiguration": "development",
+        "options": {
+          "buildTarget": "build",
+          "outputPath": ".next",
+          "dev": true
+        },
+        "configurations": {
+          "development": {
+            "buildTarget": "build:development",
+            "outputPath": ".next",
+            "dev": true
+          },
+          "production": {
+            "buildTarget": "build:production",
+            "outputPath": ".next",
+            "dev": false
+          }
+        }
+      }
+    }
+  },
   "dependencies": {
     "next": "~16.0.1",
     "react": "^19.0.0",
