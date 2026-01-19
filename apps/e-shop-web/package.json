@@ -6,25 +6,39 @@
     "targets": {
       "build": {
         "executor": "@nx/next:build",
-        "outputs": ["{projectRoot}/.next"],
+        "outputs": [
+          "{projectRoot}/.next"
+        ],
         "defaultConfiguration": "production",
-        "options": {},
+        "options": {
+          "outputPath": ".next"
+        },
         "configurations": {
-          "development": {},
-          "production": {}
+          "development": {
+            "outputPath": ".next"
+          },
+          "production": {
+            "outputPath": ".next"
+          }
         }
       },
       "serve": {
         "executor": "@nx/next:server",
         "defaultConfiguration": "development",
         "options": {
+          "buildTarget": "build",
+          "outputPath": ".next",
           "dev": true
         },
         "configurations": {
           "development": {
+            "buildTarget": "build:development",
+            "outputPath": ".next",
             "dev": true
           },
           "production": {
+            "buildTarget": "build:production",
+            "outputPath": ".next",
             "dev": false
           }
         }
