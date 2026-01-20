@@ -1,10 +1,11 @@
-const CartIcon = () => (
+const CartIcon = ({ className }: { className?: string }) => (
   <svg
     width="28"
     height="28"
     viewBox="0 0 24 24"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
+    className={className}
   >
     <circle cx="10" cy="20" r="1.5" fill="#000" />
     <circle cx="18" cy="20" r="1.5" fill="#000" />
