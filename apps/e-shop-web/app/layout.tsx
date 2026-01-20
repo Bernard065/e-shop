@@ -72,9 +72,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${roboto.variable} ${poppins.variable}`}>
+      <body
+        className={`${roboto.variable} ${poppins.variable} bg-gradient-to-br from-gray-50 via-blue-50 to-white min-h-screen`}
+      >
         <Header />
-        {children}
+        <div className="font-Poppins">{children}</div>
       </body>
     </html>
   );
