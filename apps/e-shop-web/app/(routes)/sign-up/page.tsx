@@ -9,8 +9,6 @@ import CustomInput from '@/components/CustomInput';
 import PasswordInput from '@/components/PasswordInput';
 import OtpInput from '@/components/widgets/OtpInput';
 
-export const dynamic = 'force-dynamic';
-
 const SignUp = () => {
   const [serverError, setServerError] = useState<string | null>(null);
   const [canResend, setCanResend] = useState(true);

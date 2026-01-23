@@ -12,8 +12,6 @@ import AuthLayout from '@/components/AuthLayout';
 import CustomInput from '@/components/CustomInput';
 import PasswordInput from '@/components/PasswordInput';
 
-export const dynamic = 'force-dynamic';
-
 const Login = () => {
   const [serverError, setServerError] = useState<string | null>(null);
   const [rememberMe, setRememberMe] = useState(false);

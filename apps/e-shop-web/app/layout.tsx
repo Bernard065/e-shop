@@ -72,7 +72,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <body
         className={`${roboto.variable} ${poppins.variable} bg-gradient-to-br from-gray-50 via-blue-50 to-white min-h-screen`}
       >
