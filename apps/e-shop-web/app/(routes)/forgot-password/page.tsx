@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import {
   useForgotPasswordMutations,
   type ForgotPasswordFormData,
-} from '../../hooks/useForgotPasswordMutations';
+} from '../../../hooks/useForgotPasswordMutations';
 import AuthLayout from '@/components/AuthLayout';
 import CustomInput from '@/components/CustomInput';
 

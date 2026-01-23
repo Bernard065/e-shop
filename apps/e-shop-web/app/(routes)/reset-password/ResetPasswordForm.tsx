@@ -9,7 +9,7 @@ import AuthLayout from '@/components/AuthLayout';
 import CustomInput from '@/components/CustomInput';
 import PasswordInput from '@/components/PasswordInput';
 import OtpInput from '@/components/widgets/OtpInput';
-import { useResetPasswordMutations } from '../../hooks/useResetPasswordMutations';
+import { useResetPasswordMutations } from '../../../hooks/useResetPasswordMutations';
 
 export type ResetPasswordFormData = {
   email: string;

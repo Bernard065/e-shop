@@ -5,7 +5,7 @@ import { HeartIcon, Search } from 'lucide-react';
 import ProfileIcon from '@/public/assets/svgs/profile-icon';
 import CartIcon from '@/public/assets/svgs/cart-icon';
 import HeaderBottom from './HeaderBottom';
-import { navItems } from '@/app/constants';
+import { navItems } from '@/constants/index';
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -154,14 +154,14 @@ const Header = () => {
             {/* Nav Links */}
             <div className="flex flex-col gap-2 mt-4">
               {navItems.map((item) => (
-                <a
+                <Link
                   key={item.title}
                   href={item.href}
                   className="text-base font-Poppins font-medium px-4 py-2 rounded-lg hover:bg-blue-50 hover:text-primary transition-colors duration-200"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {item.title}
-                </a>
+                </Link>
               ))}
             </div>
             {/* Actions */}

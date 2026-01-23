@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { prisma } from '@e-shop/database';
+import { prisma, User } from '@e-shop/database';
 import {
   checkOtpRestrictions,
   generateTokens,
@@ -11,6 +11,9 @@ import { baseUserSchema } from '@e-shop/shared-types';
 import { AuthError, ValidationError } from '@e-shop/common';
 import bcrypt from 'bcryptjs';
 import { setCookie } from '../utils/cookies/setCookie';
+import jwt, { JsonWebTokenError } from 'jsonwebtoken';
+
+type AuthRequest = Request & { user?: User | null };
 
 export const userRegistration = async (
   req: Request,
@@ -123,6 +126,74 @@ export const loginUser = async (
         email: user.email,
         role: user.role,
       },
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+// Get logged in user
+export const getUser = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const user = req.user;
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'User not authenticated',
+      });
+    }
+    res.status(200).json({
+      success: true,
+      user,
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+// Refresh token
+export const refreshToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const refreshToken = req.cookies.refresh_token;
+
+    if (!refreshToken) {
+      throw new ValidationError('Refresh token is missing');
+    }
+
+    const decoded = jwt.verify(
+      refreshToken,
+      process.env.JWT_REFRESH_SECRET as string,
+    ) as { id: string; role: string };
+
+    if (!decoded || !decoded.id || !decoded.role) {
+      return new JsonWebTokenError('Invalid token');
+    }
+
+    const user = await prisma.user.findUnique({ where: { id: decoded.id } });
+
+    if (!user) {
+      throw new AuthError('User not found');
+    }
+
+    const newAccessToken = jwt.sign(
+      { id: decoded.id, role: decoded.role },
+      process.env.JWT_SECRET as string,
+      { expiresIn: '15m' },
+    );
+
+    setCookie(res, 'access_token', newAccessToken);
+
+    res.status(200).json({
+      success: true,
+      message: 'Access token refreshed successfully',
     });
   } catch (error) {
     return next(error);

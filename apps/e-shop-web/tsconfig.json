@@ -31,6 +31,8 @@
     "app/**/*.jsx",
     "components/**/*.ts",
     "components/**/*.tsx",
+    "constants/**/*.ts",
+    "constants/**/*.tsx",
     "public/**/*.tsx",
     "../../apps/e-shop-web/.next/types/**/*.ts",
     "../../dist/apps/e-shop-web/.next/types/**/*.ts",
