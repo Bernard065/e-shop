@@ -5,7 +5,7 @@ import { HeartIcon, Search } from 'lucide-react';
 import ProfileIcon from '@/public/assets/svgs/profile-icon';
 import CartIcon from '@/public/assets/svgs/cart-icon';
 import HeaderBottom from './HeaderBottom';
-import { navItems } from '@/app/constants';
+import { navItems } from '@/constants';
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);

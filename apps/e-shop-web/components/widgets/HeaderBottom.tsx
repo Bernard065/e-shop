@@ -1,6 +1,6 @@
 'use client';
 
-import { navItems } from '@/app/constants';
+import { navItems } from '@/constants';
 import CartIcon from '@/public/assets/svgs/cart-icon';
 import ProfileIcon from '@/public/assets/svgs/profile-icon';
 import { AlignLeft, ChevronDown, HeartIcon, Menu } from 'lucide-react';
