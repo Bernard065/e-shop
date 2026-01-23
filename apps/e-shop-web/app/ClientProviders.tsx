@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode } from 'react';
 import { ReactQueryProvider } from '../components/ReactQueryProvider';
 
 interface ClientProvidersProps {
@@ -8,16 +8,6 @@ interface ClientProvidersProps {
 }
 
 const ClientProviders = ({ children }: ClientProvidersProps) => {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return <>{children}</>;
-  }
-
   return <ReactQueryProvider>{children}</ReactQueryProvider>;
 };
 
