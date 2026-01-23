@@ -1,49 +1,49 @@
-'use client';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import axios, { AxiosError } from 'axios';
 
-export type LoginFormData = {
+export type ResetPasswordFormData = {
   email: string;
-  password: string;
+  otp: string;
+  newPassword: string;
 };
 
-interface UseLoginMutationsProps {
+interface UseResetPasswordMutationsProps {
   setServerError: (error: string | null) => void;
+  setSuccess: (msg: string) => void;
   router: ReturnType<typeof useRouter>;
 }
 
-export const useLoginMutations = ({
+export function useResetPasswordMutations({
   setServerError,
+  setSuccess,
   router,
-}: UseLoginMutationsProps) => {
-  let loginMutation;
+}: UseResetPasswordMutationsProps) {
+  let resetPasswordMutation;
 
   try {
-    loginMutation = useMutation({
-      mutationFn: async (data: LoginFormData) => {
+    resetPasswordMutation = useMutation({
+      mutationFn: async (data: ResetPasswordFormData) => {
         const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL}/auth/login-user`,
+          `${process.env.NEXT_PUBLIC_API_URL}/auth/reset-user-password`,
           data,
-          {
-            withCredentials: true,
-          },
         );
         return response.data;
       },
       onSuccess: () => {
         setServerError(null);
-        router.push('/');
+        setSuccess('Password reset successfully! Redirecting to login...');
+        setTimeout(() => router.push('/login'), 2000);
       },
       onError: (error: AxiosError<{ message: string }>) => {
         setServerError(
-          error.response?.data?.message || 'Login failed. Please try again.',
+          error.response?.data?.message || 'Failed to reset password',
         );
       },
     });
   } catch (error) {
-    console.error('Failed to initialize login mutation:', error);
-    loginMutation = {
+    console.error('Failed to initialize reset password mutation:', error);
+    resetPasswordMutation = {
       mutate: () => {
         throw new Error(
           'React Query context is not available. Ensure the component is wrapped with QueryClientProvider.',
@@ -53,7 +53,5 @@ export const useLoginMutations = ({
     };
   }
 
-  return {
-    loginMutation,
-  };
-};
+  return { resetPasswordMutation };
+}

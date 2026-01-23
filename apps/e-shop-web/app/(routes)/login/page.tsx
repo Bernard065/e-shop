@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
+
+export const dynamic = 'force-dynamic';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
@@ -11,8 +13,6 @@ import {
 import AuthLayout from '@/components/AuthLayout';
 import CustomInput from '@/components/CustomInput';
 import PasswordInput from '@/components/PasswordInput';
-
-export const dynamic = 'force-dynamic';
 
 const Login = () => {
   const [serverError, setServerError] = useState<string | null>(null);

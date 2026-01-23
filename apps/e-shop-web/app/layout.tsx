@@ -2,7 +2,7 @@ import './global.css';
 import type { Metadata } from 'next';
 import Header from '@/components/shared/widgets/Header';
 import { Roboto, Poppins } from '@next/font/google';
-import Providers from './providers';
+import ClientProviders from './ClientProviders';
 
 export const metadata: Metadata = {
   title: 'VerityStore - Your Premier Online Store',
@@ -72,14 +72,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <body
         className={`${roboto.variable} ${poppins.variable} bg-gradient-to-br from-gray-50 via-blue-50 to-white min-h-screen`}
       >
         <Header />
-        <Providers>
+        <ClientProviders>
           <div className="font-Poppins">{children}</div>
-        </Providers>
+        </ClientProviders>
       </body>
     </html>
   );

@@ -64,7 +64,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 // Routes
-app.use(router);
+app.use('/auth', router);
 
 // Error handling middleware
 app.use(errorMiddleware);
