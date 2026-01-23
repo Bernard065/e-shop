@@ -17,27 +17,41 @@ export const useLoginMutations = ({
   setServerError,
   router,
 }: UseLoginMutationsProps) => {
-  const loginMutation = useMutation({
-    mutationFn: async (data: LoginFormData) => {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/login-user`,
-        data,
-        {
-          withCredentials: true,
-        },
-      );
-      return response.data;
-    },
-    onSuccess: () => {
-      setServerError(null);
-      router.push('/');
-    },
-    onError: (error: AxiosError<{ message: string }>) => {
-      setServerError(
-        error.response?.data?.message || 'Login failed. Please try again.',
-      );
-    },
-  });
+  let loginMutation;
+
+  try {
+    loginMutation = useMutation({
+      mutationFn: async (data: LoginFormData) => {
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_API_URL}/auth/login-user`,
+          data,
+          {
+            withCredentials: true,
+          },
+        );
+        return response.data;
+      },
+      onSuccess: () => {
+        setServerError(null);
+        router.push('/');
+      },
+      onError: (error: AxiosError<{ message: string }>) => {
+        setServerError(
+          error.response?.data?.message || 'Login failed. Please try again.',
+        );
+      },
+    });
+  } catch (error) {
+    console.error('Failed to initialize login mutation:', error);
+    loginMutation = {
+      mutate: () => {
+        throw new Error(
+          'React Query context is not available. Ensure the component is wrapped with QueryClientProvider.',
+        );
+      },
+      isPending: false,
+    };
+  }
 
   return {
     loginMutation,

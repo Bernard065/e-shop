@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
+
+export const dynamic = 'force-dynamic';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { FormData, useSignUpMutations } from '../../hooks/useSignUpMutations';
