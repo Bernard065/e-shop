@@ -5,7 +5,10 @@ import React, { useState } from 'react';
 export const dynamic = 'force-dynamic';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
-import { FormData, useSignUpMutations } from '../../hooks/useSignUpMutations';
+import {
+  FormData,
+  useSignUpMutations,
+} from '../../../hooks/useSignUpMutations';
 import AuthLayout from '@/components/AuthLayout';
 import CustomInput from '@/components/CustomInput';
 import PasswordInput from '@/components/PasswordInput';

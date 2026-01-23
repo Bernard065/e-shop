@@ -2,7 +2,7 @@ import './global.css';
 import type { Metadata } from 'next';
 import Header from '@/components/shared/widgets/Header';
 import { Roboto, Poppins } from '@next/font/google';
-import ClientProviders from './ClientProviders';
+import ClientProviders from '../components/ClientProviders';
 
 export const metadata: Metadata = {
   title: 'VerityStore - Your Premier Online Store',

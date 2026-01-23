@@ -114,6 +114,7 @@
     }
   },
   "dependencies": {
+    "@e-shop/common": "*",
     "express": "^4.21.2"
   }
 }

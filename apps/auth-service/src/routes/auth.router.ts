@@ -1,11 +1,14 @@
 import express, { Router } from 'express';
 import {
+  getUser,
   loginUser,
+  refreshToken,
   userForgotPassword,
   userRegistration,
   userResetPassword,
   verifyUser,
 } from '../controllers/auth.controller';
+import { isAuthenticated } from '@e-shop/common';
 
 const router: Router = express.Router();
 
@@ -81,6 +84,39 @@ router.post(
     }
   */
   loginUser,
+);
+
+router.post(
+  '/logged-in-user',
+  /*
+    #swagger.tags = ['Auth']
+    #swagger.summary = 'Get logged-in user'
+    #swagger.description = 'Retrieve details of the currently logged-in user'
+    #swagger.responses[200] = {
+      description: 'User details retrieved successfully'
+    }
+    #swagger.responses[401] = {
+      description: 'Unauthorized'
+    }
+  */
+  isAuthenticated,
+  getUser,
+);
+
+router.post(
+  '/refresh-token',
+  /*
+    #swagger.tags = ['Auth']
+    #swagger.summary = 'Refresh access token'
+    #swagger.description = 'Refresh access token using refresh token'
+    #swagger.responses[200] = {
+      description: 'Access token refreshed successfully'
+    }
+    #swagger.responses[400] = {
+      description: 'Invalid or missing refresh token'
+    }
+  */
+  refreshToken,
 );
 
 router.post(
